@@ -4,13 +4,12 @@ import {
 	INodeType,
 	INodeTypeDescription,
 	NodeOperationError,
-	NodeConnectionType,
 } from 'n8n-workflow';
-
-const wkhtmltopdf = require('wkhtmltopdf');
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+
+const wkhtmltopdf = require('wkhtmltopdf');
 
 // Configure wkhtmltopdf path based on platform
 if (os.platform() === 'win32') {
@@ -34,8 +33,8 @@ export class HtmlToPdf implements INodeType {
 		defaults: {
 			name: 'HTML to PDF',
 		},
-		inputs: [NodeConnectionType.Main],
-		outputs: [NodeConnectionType.Main],
+		inputs: ['main'],
+		outputs: ['main'],
 		properties: [
 			{
 				displayName: 'HTML Content',
@@ -185,6 +184,14 @@ export class HtmlToPdf implements INodeType {
 				placeholder: '--disable-smart-shrinking --print-media-type',
 				description: 'Additional wkhtmltopdf options (space-separated)',
 			},
+			{
+				displayName: 'Wkhtmltopdf binary path',
+				name: 'wkhtmltopdfBinaryPath',
+				type: 'string',
+				default: wkhtmltopdf.command,
+				placeholder: wkhtmltopdf.command,
+				description: 'Path to the wkhtmltopdf binary (Optional)',
+			},
 		],
 	};
 
@@ -206,7 +213,7 @@ export class HtmlToPdf implements INodeType {
 				const marginLeft = this.getNodeParameter('marginLeft', i) as string;
 				const enableJavaScript = this.getNodeParameter('enableJavaScript', i) as boolean;
 				const customOptions = this.getNodeParameter('customOptions', i) as string;
-
+				wkhtmltopdf.command = this.getNodeParameter('wkhtmltopdfBinaryPath', i) as string;
 				// Validate input
 				if (!htmlContent && !htmlUrl) {
 					throw new NodeOperationError(this.getNode(), 'Either HTML Content or HTML URL must be provided');

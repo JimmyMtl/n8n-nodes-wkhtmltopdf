@@ -1,0 +1,31 @@
+{
+  "node": "n8n-nodes-wkhtmltopdf.HtmlToPdf",
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": [
+    "PDF",
+    "Html",
+    "Development",
+    "Utility"
+  ],
+  "resources": {
+    "credentialDocumentation": [
+      {
+        "url": "https://github.com/JimmyMtl/n8n-nodes-wkhtmltopdf"
+      }
+    ],
+    "primaryDocumentation": [
+      {
+        "url": "https://github.com/JimmyMtl/n8n-nodes-wkhtmltopdf"
+      }
+    ]
+  },
+  "alias": [
+    "PDF",
+    "HTML",
+    "PDF to HTML",
+    "Binary",
+    "File",
+    "Converting"
+  ]
+}
