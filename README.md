@@ -1,4 +1,4 @@
-# HTML to PDF n8n Node
+# n8n-nodes-wkhtmltopdf
 
 A custom n8n node for converting HTML content to PDF using wkhtmltopdf.
 
