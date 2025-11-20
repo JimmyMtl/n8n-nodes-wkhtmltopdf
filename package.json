@@ -1,5 +1,5 @@
 {
-  "name": "n8n-nodes-wkhtmlktopdf",
+  "name": "n8n-nodes-wkhtmltopdf",
   "version": "1.0.0",
   "description": "n8n node for converting HTML to PDF using wkhtmltopdf",
   "keywords": [
