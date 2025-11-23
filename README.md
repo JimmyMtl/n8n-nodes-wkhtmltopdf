@@ -1,9 +1,16 @@
 # n8n-nodes-wkhtmltopdf
 
-A custom **n8n node** for converting HTML or a webpage URL into a **PDF** using `wkhtmltopdf`.
-This package is a **maintained fork** of the original community node, including multiple fixes, improved error handling, and better compatibility across environments (Linux, macOS, Windows, Docker).
+[![npm version](https://img.shields.io/npm/v/n8n-nodes-wkhtmltopdf.svg)](https://www.npmjs.com/package/n8n-nodes-wkhtmltopdf)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-## Quick installation on n8n
+An **n8n community node** for converting **HTML** or **webpage URLs** to **PDF** using [`wkhtmltopdf`](https://wkhtmltopdf.org/).
+
+This package is a maintained fork of an original HTML → PDF node, with fixes and improvements for:
+- Better error handling
+- Improved compatibility (Linux, macOS, Windows, Docker)
+- More configuration and output options
+
+## Quick n8n installation
 
 ```bash
 npm i n8n-nodes-wkhtmltopdf
@@ -13,58 +20,83 @@ npm i n8n-nodes-wkhtmltopdf
 
 ## ✨ Features
 
-* Convert **raw HTML** into a PDF
-* Convert **URL/webpage** into a PDF
-* Output to **Base64**, **Binary**, or **File Path**
-* Supports **custom wkhtmltopdf options**
-* Configurable:
-
-  * Page size (A4, A3, Letter…)
-  * Orientation (Portrait / Landscape)
-  * Margins
-  * JavaScript execution
-* Detects wkhtmltopdf path automatically on most systems
-* Works in **self-hosted n8n**, including Docker (see notes below)
-
----
-
-## 📦 Requirements
-
-This node requires a working installation of **wkhtmltopdf**.
-
-The node will try the most common system paths:
-
-| OS      | Default Path Checked                               |
-| ------- | -------------------------------------------------- |
-| Windows | `C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe` |
-| Linux   | `/usr/bin/wkhtmltopdf`                             |
-| macOS   | `/usr/local/bin/wkhtmltopdf`                       |
-
-If the binary is not found, you can manually set a custom path inside the node options.
+- Convert **raw HTML** to PDF  
+- Convert **URL/webpage** to PDF  
+- Output formats:
+  - **Base64**
+  - **Binary (n8n binary property)**
+  - **File path on disk**
+- Configurable:
+  - Page size (A4, A3, A5, Letter, Legal)
+  - Orientation (Portrait / Landscape)
+  - Margins
+  - JavaScript execution
+  - Custom `wkhtmltopdf` options (CLI flags)
+- Supports self-hosted **n8n** (including Docker)
 
 ---
 
-## 🛠 Installation of wkhtmltopdf
+## 📦 Installation
 
-### **Windows**
+### As an n8n community node (npm)
 
-Download the official installer:
-[https://wkhtmltopdf.org/downloads.html](https://wkhtmltopdf.org/downloads.html)
+From your n8n installation directory:
 
-### **macOS**
+```bash
+npm install n8n-nodes-wkhtmltopdf
+````
+
+n8n will automatically pick it up as a community node on restart (for recent versions with community nodes support enabled).
+
+### Local / custom nodes folder
+
+If you manage custom nodes manually:
+
+```bash
+git clone https://github.com/<your-user>/n8n-nodes-wkhtmltopdf.git
+cd n8n-nodes-wkhtmltopdf
+npm install
+npm run build
+```
+
+Then copy or mount this folder into your n8n custom nodes directory, for example:
+
+```text
+~/.n8n/custom/n8n-nodes-wkhtmltopdf
+```
+
+Restart n8n and the node should appear in the editor.
+
+---
+
+## 🛠 wkhtmltopdf Requirement
+
+This node **requires `wkhtmltopdf` to be installed** and reachable from n8n.
+
+The node will try common default paths:
+
+| OS      | Default Path Checked                                   |
+| ------- | ------------------------------------------------------ |
+| Windows | `C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe` |
+| Linux   | `/usr/bin/wkhtmltopdf`                                 |
+| macOS   | `/usr/local/bin/wkhtmltopdf`                           |
+
+You can also configure a **custom path** in the node options if your installation is elsewhere.
+
+### Install on macOS
 
 ```bash
 brew install wkhtmltopdf
 ```
 
-### **Ubuntu/Debian**
+### Install on Ubuntu/Debian
 
 ```bash
 sudo apt-get update
 sudo apt-get install wkhtmltopdf
 ```
 
-### **CentOS / RHEL / Fedora**
+### Install on CentOS / RHEL / Fedora
 
 ```bash
 sudo yum install wkhtmltopdf
@@ -72,83 +104,61 @@ sudo yum install wkhtmltopdf
 sudo dnf install wkhtmltopdf
 ```
 
+### Install on Windows
+
+Download and install from:
+[https://wkhtmltopdf.org/downloads.html](https://wkhtmltopdf.org/downloads.html)
+
 ---
 
-## 🐳 Using inside Docker (important)
+## 🐳 Using in Docker
 
-Most lightweight Linux images (Alpine, Debian Slim, n8n official images) **do NOT ship wkhtmltopdf** and do not provide it in default repos.
+If you are running n8n in Docker, most images **do not include `wkhtmltopdf`** by default.
 
-If you run n8n in Docker, you must:
-
-1. Use a Debian-based image
-2. Install dependencies
-3. Install wkhtmltopdf manually
-
-Example `Dockerfile` section (Debian):
+Example for a Debian-based image:
 
 ```dockerfile
+FROM n8nio/n8n:latest
+
+USER root
+
 RUN apt-get update && \
-    apt-get install -y wkhtmltopdf xfonts-base fontconfig && \
-    apt-get clean
+    apt-get install -y wkhtmltopdf xfonts-base fontconfig libxrender1 libxext6 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+USER node
 ```
 
-⚠️ **wkhtmltopdf is not available on Alpine** → you must use a Debian or Ubuntu-based image.
-
----
-
-## 📥 Node Installation
-
-Clone the repo:
-
-```bash
-git clone https://github.com/your-user/n8n-nodes-wkhtmltopdf.git
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Build the package:
-
-```bash
-npm run build
-```
-
-Copy the compiled folder into your n8n custom nodes directory:
-
-```
-~/.n8n/custom/
-```
-
-Or mount it in Docker:
+And mount the node:
 
 ```yaml
-volumes:
-  - ./n8n-nodes-wkhtmltopdf:/home/node/.n8n/custom/n8n-nodes-wkhtmltopdf
+services:
+  n8n:
+    image: your-n8n-image-with-wkhtmltopdf
+    volumes:
+      - ./n8n-nodes-wkhtmltopdf:/home/node/.n8n/custom/n8n-nodes-wkhtmltopdf
 ```
-
-Restart n8n → the node appears in the editor.
 
 ---
 
 ## 🚀 Usage
 
-1. Add **HTML to PDF (wkhtmltopdf)** node to your workflow
-2. Choose whether to convert:
+1. In the n8n editor, search for **“HTML to PDF (wkhtmltopdf)”**.
+2. Select **Input Type**:
 
-   * **Raw HTML**
-   * **URL**
-3. Configure:
+   * **HTML Content** → paste or map raw HTML
+   * **URL** → provide a web address
+3. Choose **Output Format**:
 
-   * Output format (Base64, Binary, File Path)
-   * Page size
-   * Orientation
-   * Margins
-   * JavaScript enable/disable
-   * Custom wkhtmltopdf options
-4. Execute the workflow
+   * `Base64` → returns a Base64 string
+   * `Binary` → attaches PDF to an n8n binary property
+   * `File Path` → write to disk in the container/host
+4. Configure PDF options:
+
+   * **Page size**, **orientation**, **margins**
+   * **Enable JavaScript**
+   * Optional **custom wkhtmltopdf flags**
+5. Execute the workflow and use the PDF in downstream nodes.
 
 ---
 
@@ -156,71 +166,73 @@ Restart n8n → the node appears in the editor.
 
 ### Input
 
-* **HTML Content** — raw HTML to convert
-* **HTML URL** — webpage to convert
+* **HTML Content**
+  Direct HTML string to convert.
+
+* **HTML URL**
+  URL of a webpage to convert. The node will pass the URL to `wkhtmltopdf`.
 
 ### Output
 
 * **Base64**
-* **Binary (n8n binary property)**
-* **Local File Path**
+  Returns the PDF as a Base64-encoded string.
 
-### PDF Options
+* **Binary**
+  Exposes the PDF via a binary property (for use with other n8n nodes like Email, FTP, etc.).
 
-* Page size: `A4`, `A3`, `A5`, `Letter`, `Legal`
-* Orientation: `Portrait` / `Landscape`
-* Margins: top, right, bottom, left
-* Enable JavaScript: true/false
-* Timeout & delay options
-* Custom CLI options forwarded directly to wkhtmltopdf
+* **File Path**
+  Saves the PDF to the local filesystem. Useful in Docker with a mounted volume.
 
-### Advanced
+### PDF Settings
 
-* **Custom wkhtmltopdf binary path**
-* **Disable smart shrinking**
-* **Overwrite existing files** (when writing to disk)
+* **Page Size**: `A4`, `A3`, `A5`, `Letter`, `Legal`, etc.
+* **Orientation**: `Portrait` / `Landscape`
+* **Margins**: `Top`, `Right`, `Bottom`, `Left`
+* **Enable JavaScript**: Enable or disable JS execution for the page.
+* **Custom Options**: Raw CLI flags passed directly to `wkhtmltopdf`.
 
 ---
 
 ## 🐞 Troubleshooting
 
-### “wkhtmltopdf: command not found”
+### `wkhtmltopdf: command not found`
 
-wkhtmltopdf is not installed or not in PATH.
-Check with:
+`wkhtmltopdf` is not installed or not in `PATH`.
 
-```bash
-which wkhtmltopdf
-```
+* Check: `which wkhtmltopdf`
+* Install it inside your host / container
+* Configure a custom path in the node if required
 
-If using Docker: install wkhtmltopdf inside the container.
+### Exit code `127` / `139` or blank PDF
 
----
-
-### “Exit code 127 / 139”
-
-This usually means missing system libraries.
-
-Install fonts + X11 deps:
+Often due to missing system libraries or fonts. On Debian/Ubuntu, try:
 
 ```bash
 apt-get install -y xfonts-base fontconfig libxrender1 libxext6
 ```
 
+Also, for dynamic/JS-heavy pages:
+
+* Add `--javascript-delay 2000`
+* Add `--enable-local-file-access` if you load local resources
+
 ---
 
-### PDF is blank or styles missing
+## 🧩 Development
 
-wkhtmltopdf sometimes needs:
+Clone and install:
 
-* `--enable-local-file-access`
-* Full absolute paths for local assets
-* `--javascript-delay 2000` for JS-powered pages
+```bash
+git clone https://github.com/<your-user>/n8n-nodes-wkhtmltopdf.git
+cd n8n-nodes-wkhtmltopdf
+npm install
+npm run build
+```
+
+You can then symlink or mount the repo into your n8n custom nodes folder for live development.
 
 ---
 
 ## 📄 License
 
-MIT
-
----
+[MIT](./LICENSE)
