@@ -33,9 +33,9 @@ jobs:
           # Use a token that can push the bump commit/tag back to the repo.
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      # pnpm version is read from the "packageManager" field in package.json,
+      # keeping CI in lockstep with local development.
       - uses: pnpm/action-setup@v6
-        with:
-          version: latest
 
       - uses: actions/setup-node@v6
         with:
