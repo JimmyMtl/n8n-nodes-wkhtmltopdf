@@ -1,6 +1,5 @@
 # n8n-nodes-wkhtmltopdf
 
-[![npm version](https://img.shields.io/npm/v/n8n-nodes-wkhtmltopdf.svg)](https://www.npmjs.com/package/n8n-nodes-wkhtmltopdf)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 An **n8n community node** for converting **HTML** or **webpage URLs** to **PDF** using [`wkhtmltopdf`](https://wkhtmltopdf.org/).
@@ -13,7 +12,7 @@ This package is a maintained fork of an original HTML → PDF node, with fixes a
 ## Quick n8n installation
 
 ```bash
-npm i n8n-nodes-wkhtmltopdf
+pnpm add n8n-nodes-wkhtmltopdf
 ```
 
 ---
@@ -38,12 +37,12 @@ npm i n8n-nodes-wkhtmltopdf
 
 ## 📦 Installation
 
-### As an n8n community node (npm)
+### As an n8n community node (pnpm)
 
 From your n8n installation directory:
 
 ```bash
-npm install n8n-nodes-wkhtmltopdf
+pnpm add n8n-nodes-wkhtmltopdf
 ````
 
 n8n will automatically pick it up as a community node on restart (for recent versions with community nodes support enabled).
@@ -55,8 +54,8 @@ If you manage custom nodes manually:
 ```bash
 git clone https://github.com/<your-user>/n8n-nodes-wkhtmltopdf.git
 cd n8n-nodes-wkhtmltopdf
-npm install
-npm run build
+pnpm install
+pnpm build
 ```
 
 Then copy or mount this folder into your n8n custom nodes directory, for example:
@@ -225,8 +224,8 @@ Clone and install:
 ```bash
 git clone https://github.com/<your-user>/n8n-nodes-wkhtmltopdf.git
 cd n8n-nodes-wkhtmltopdf
-npm install
-npm run build
+pnpm install
+pnpm build
 ```
 
 You can then symlink or mount the repo into your n8n custom nodes folder for live development.
