@@ -1,4 +1,9 @@
 onlyBuiltDependencies:
   - es5-ext
-  - eslint-plugin-n8n-nodes-base
   - fsevents
+
+# eslint-plugin-n8n-nodes-base's only lifecycle script is a `preinstall: npx
+# only-allow pnpm` guard that we intentionally do not run (it's pointless for a
+# dependency and needs network). Listing it here suppresses ERR_PNPM_IGNORED_BUILDS.
+ignoredBuiltDependencies:
+  - eslint-plugin-n8n-nodes-base
