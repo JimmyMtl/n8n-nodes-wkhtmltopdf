@@ -7,3 +7,7 @@ onlyBuiltDependencies:
 # dependency and needs network). Listing it here suppresses ERR_PNPM_IGNORED_BUILDS.
 ignoredBuiltDependencies:
   - eslint-plugin-n8n-nodes-base
+
+allowBuilds:
+  eslint-plugin-n8n-nodes-base: true
+  isolated-vm: true
