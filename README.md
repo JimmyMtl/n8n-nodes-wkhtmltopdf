@@ -114,29 +114,33 @@ Download and install from:
 
 If you are running n8n in Docker, most images **do not include `wkhtmltopdf`** by default.
 
-Example for a Debian-based image:
+> **Note:** n8n 2.x ships as an Alpine-based hardened image with no package
+> manager, so `apt-get install wkhtmltopdf` no longer works. The binary has to
+> be copied in from a prebuilt source.
 
-```dockerfile
-FROM n8nio/n8n:latest
+### Local testing with docker compose
 
-USER root
+This repo includes a ready-to-run stack (`docker-compose.yml` + `docker/`) that
+builds an n8n image with `wkhtmltopdf` baked in and auto-installs this node from
+your local build:
 
-RUN apt-get update && \
-    apt-get install -y wkhtmltopdf xfonts-base fontconfig libxrender1 libxext6 && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-USER node
+```bash
+pnpm build                 # produce dist/ on the host
+docker compose up --build  # build the image and start n8n + a sample web server
 ```
 
-And mount the node:
+Then open <http://localhost:5678>, add an **HTML to PDF** node, and test either
+**HTML Content** mode or **HTML URL** mode against `http://web/` (the bundled
+nginx sample page). After changing the node code:
 
-```yaml
-services:
-  n8n:
-    image: your-n8n-image-with-wkhtmltopdf
-    volumes:
-      - ./n8n-nodes-wkhtmltopdf:/home/node/.n8n/custom/n8n-nodes-wkhtmltopdf
+```bash
+pnpm build
+REINSTALL_WKHTMLTOPDF_NODE=true docker compose up -d --force-recreate n8n
 ```
+
+See `docker/Dockerfile` for how `wkhtmltopdf` is added (prebuilt
+`surnet/alpine-wkhtmltopdf` binary + its runtime libraries/fonts) — reuse that
+pattern in your own image if you self-host n8n on the Alpine images.
 
 ---
 
