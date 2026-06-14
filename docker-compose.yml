@@ -1,0 +1,56 @@
+name: n8n-nodes-wkhtmltopdf-dev
+
+# Local stack to test the HTML to PDF node end-to-end from the n8n UI:
+#   - n8n: built with the wkhtmltopdf CLI + this node auto-installed
+#   - web: a tiny nginx serving docker/sample.html, to test URL -> PDF
+#
+# Usage:
+#   1. pnpm build              # produce dist/ on the host
+#   2. docker compose up --build
+#   3. open http://localhost:5678, add an "HTML to PDF" node, then either:
+#        - HTML Content: paste some HTML, or
+#        - HTML URL:     http://web/        (the nginx companion below)
+#      and execute. Default output is a binary PDF on the node output.
+#
+# After editing the node code: `pnpm build`, then
+#   REINSTALL_WKHTMLTOPDF_NODE=true docker compose up -d --force-recreate n8n
+#
+# The sample page is also published on the host at http://localhost:8080 so you
+# can preview it in a browser.
+
+services:
+  n8n:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        N8N_VERSION: ${N8N_VERSION:-2.26.0}
+    container_name: n8n-wkhtmltopdf
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_SECURE_COOKIE=false
+      - N8N_RUNNERS_ENABLED=true
+      - GENERIC_TIMEZONE=${TZ:-UTC}
+      - TZ=${TZ:-UTC}
+      # set to true to reinstall the node from /opt/code-temp on next start
+      - REINSTALL_WKHTMLTOPDF_NODE=${REINSTALL_WKHTMLTOPDF_NODE:-false}
+    volumes:
+      - n8n_data:/home/node/.n8n
+      # the built package, installed into ~/.n8n/nodes by the entrypoint
+      - ./:/opt/code-temp:ro
+    depends_on:
+      - web
+
+  web:
+    image: nginx:alpine
+    container_name: n8n-wkhtmltopdf-web
+    restart: unless-stopped
+    ports:
+      - "8080:80" # host preview only; n8n reaches it as http://web/ on the compose network
+    volumes:
+      - ./docker/sample.html:/usr/share/nginx/html/index.html:ro
+
+volumes:
+  n8n_data:
