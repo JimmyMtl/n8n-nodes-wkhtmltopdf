@@ -13,7 +13,7 @@
 
 # Declared before the first FROM so it can be used in the final FROM line.
 ARG N8N_VERSION=2.26.0
-ARG ALPINE_VERSION=3.23
+ARG ALPINE_VERSION=3.24
 ARG WKHTMLTOPDF_IMAGE=surnet/alpine-wkhtmltopdf:3.23.4-0.12.6-full
 
 # ---- Stage 1: collect wkhtmltopdf's runtime dependency files ----
