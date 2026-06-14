@@ -16,6 +16,11 @@ if (os.platform() === 'win32') {
 	wkhtmltopdf.command = 'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe';
 } else if (os.platform() === 'linux') {
 	wkhtmltopdf.command = '/usr/bin/wkhtmltopdf';
+	// The wkhtmltopdf package pipes its output through a shell that must support
+	// `set -o pipefail`. It defaults to /bin/bash, which is absent on Alpine
+	// (n8n's official base image). busybox /bin/sh supports pipefail, so prefer
+	// bash when present and otherwise fall back to /bin/sh.
+	wkhtmltopdf.shell = fs.existsSync('/bin/bash') ? '/bin/bash' : '/bin/sh';
 } else if (os.platform() === 'darwin') {
 	// macOS - try common installation paths
 	wkhtmltopdf.command = '/usr/local/bin/wkhtmltopdf';
@@ -249,37 +254,20 @@ export class HtmlToPdf implements INodeType {
 					});
 				}
 
-				let pdfBuffer: Buffer;
-
-				if (htmlUrl) {
-					// Convert from URL
-					pdfBuffer = await new Promise<Buffer>((resolve, reject) => {
-						wkhtmltopdf(htmlUrl, options, (err: any, stream: any) => {
-							if (err) {
-								reject(err);
-							} else {
-								const chunks: Buffer[] = [];
-								stream.on('data', (chunk: Buffer) => chunks.push(chunk));
-								stream.on('end', () => resolve(Buffer.concat(chunks)));
-								stream.on('error', reject);
-							}
-						});
-					});
-				} else {
-					// Convert from HTML content
-					pdfBuffer = await new Promise<Buffer>((resolve, reject) => {
-						wkhtmltopdf(htmlContent, options, (err: any, stream: any) => {
-							if (err) {
-								reject(err);
-							} else {
-								const chunks: Buffer[] = [];
-								stream.on('data', (chunk: Buffer) => chunks.push(chunk));
-								stream.on('end', () => resolve(Buffer.concat(chunks)));
-								stream.on('error', reject);
-							}
-						});
-					});
-				}
+				// Convert from URL when provided, otherwise from the raw HTML content.
+				// Consume the stream the package returns directly rather than via its
+				// completion callback: the callback only fires once the wkhtmltopdf
+				// process exits, but the process cannot exit until its stdout is
+				// drained, so reading only inside the callback deadlocks on any
+				// non-trivial PDF.
+				const input = htmlUrl || htmlContent;
+				const pdfBuffer: Buffer = await new Promise<Buffer>((resolve, reject) => {
+					const chunks: Buffer[] = [];
+					const stream = wkhtmltopdf(input, options);
+					stream.on('data', (chunk: Buffer) => chunks.push(chunk));
+					stream.on('end', () => resolve(Buffer.concat(chunks)));
+					stream.on('error', reject);
+				});
 
 				// Generate filename
 				const timestamp = Date.now();
