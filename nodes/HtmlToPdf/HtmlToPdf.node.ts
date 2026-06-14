@@ -98,24 +98,24 @@ export class HtmlToPdf implements INodeType {
 				type: 'options',
 				options: [
 					{
-						name: 'A4',
-						value: 'A4',
-					},
-					{
 						name: 'A3',
 						value: 'A3',
+					},
+					{
+						name: 'A4',
+						value: 'A4',
 					},
 					{
 						name: 'A5',
 						value: 'A5',
 					},
 					{
-						name: 'Letter',
-						value: 'Letter',
-					},
-					{
 						name: 'Legal',
 						value: 'Legal',
+					},
+					{
+						name: 'Letter',
+						value: 'Letter',
 					},
 				],
 				default: 'A4',
@@ -185,12 +185,12 @@ export class HtmlToPdf implements INodeType {
 				description: 'Additional wkhtmltopdf options (space-separated)',
 			},
 			{
-				displayName: 'Wkhtmltopdf binary path',
+				displayName: 'Wkhtmltopdf Binary Path',
 				name: 'wkhtmltopdfBinaryPath',
 				type: 'string',
-				default: wkhtmltopdf.command,
+				default: '',
 				placeholder: wkhtmltopdf.command,
-				description: 'Path to the wkhtmltopdf binary (Optional)',
+				description: 'Path to the wkhtmltopdf binary. Leave empty to use the platform default.',
 			},
 		],
 	};
@@ -213,7 +213,11 @@ export class HtmlToPdf implements INodeType {
 				const marginLeft = this.getNodeParameter('marginLeft', i) as string;
 				const enableJavaScript = this.getNodeParameter('enableJavaScript', i) as boolean;
 				const customOptions = this.getNodeParameter('customOptions', i) as string;
-				wkhtmltopdf.command = this.getNodeParameter('wkhtmltopdfBinaryPath', i) as string;
+				const wkhtmltopdfBinaryPath = this.getNodeParameter('wkhtmltopdfBinaryPath', i) as string;
+				// Only override the binary path when provided; otherwise keep the platform default.
+				if (wkhtmltopdfBinaryPath) {
+					wkhtmltopdf.command = wkhtmltopdfBinaryPath;
+				}
 				// Validate input
 				if (!htmlContent && !htmlUrl) {
 					throw new NodeOperationError(this.getNode(), 'Either HTML Content or HTML URL must be provided');
