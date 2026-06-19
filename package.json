@@ -20,7 +20,7 @@
     "url": "git+https://github.com/JimmyMtl/n8n-nodes-wkhtmltopdf.git"
   },
   "main": "index.js",
-  "packageManager": "pnpm@11.6.0",
+  "packageManager": "pnpm@11.7.0",
   "scripts": {
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
