@@ -12,7 +12,7 @@
 # the copied libssl3/freetype/etc. match what libwkhtmltox links against.
 
 # Declared before the first FROM so it can be used in the final FROM line.
-ARG N8N_VERSION=2.29.5
+ARG N8N_VERSION=2.29.6
 ARG ALPINE_VERSION=3.24
 ARG WKHTMLTOPDF_IMAGE=surnet/alpine-wkhtmltopdf:3.23.4-0.12.6-full
 
