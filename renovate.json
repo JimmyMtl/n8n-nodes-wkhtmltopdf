@@ -3,5 +3,14 @@
   "extends": [
     "config:recommended"
   ],
-  "minimumReleaseAge": "3 days"
+  "minimumReleaseAge": "3 days",
+  "packageRules": [
+    {
+      "description": "typescript-eslint peers on `typescript >=4.8.4 <6.1.0` and hard-errors on TS 7, which breaks `pnpm lint` and therefore `prepublishOnly`/publishing. Hold at 6.0.x until typescript-eslint supports TS 7 (typescript-eslint#10940), then drop this rule.",
+      "matchPackageNames": [
+        "typescript"
+      ],
+      "allowedVersions": "<6.1.0"
+    }
+  ]
 }
