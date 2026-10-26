@@ -14,7 +14,7 @@
 # Declared before the first FROM so it can be used in the final FROM line.
 ARG N8N_VERSION=2.30.4
 ARG ALPINE_VERSION=3.24
-ARG WKHTMLTOPDF_IMAGE=surnet/alpine-wkhtmltopdf:3.23.4-0.12.6-full
+ARG WKHTMLTOPDF_IMAGE=surnet/alpine-wkhtmltopdf:3.24.3-0.12.6-full
 
 # ---- Stage 1: collect wkhtmltopdf's runtime dependency files ----
 FROM alpine:${ALPINE_VERSION} AS deps
